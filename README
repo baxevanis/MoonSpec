@@ -1,0 +1,4 @@
+MoonSpec
+MoonSpec is a simple script to get the current moon phase.
+In addition you can get the next desired phase.
+Project was made to familiarize myself with phpspec and produce a simple library to be used on other projects
