@@ -1,14 +1,14 @@
 <?php
 
-namespace spec;
+namespace spec\MoonSpec;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class MoonSpecSpec extends ObjectBehavior
+class SunSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType('MoonSpec');
+        $this->shouldHaveType('MoonSpec\Sun');
     }
 }
