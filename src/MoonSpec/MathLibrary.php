@@ -4,12 +4,14 @@ namespace MoonSpec;
 
 class MathLibrary
 {
-    static public function fixAngle ( $arg )	{
 
-        return ($arg - 360.0 * (floor($arg / 360.0)));
+    public function fixAngle ( $deg )
+    {
+        return ($deg - 360.0 * (floor($deg / 360.0)));
     }
 
-    static public function kepler ( $m, $ecc ) {
+    public function kepler ( $m, $ecc )
+    {
         $EPSILON = 1e-6;
         $m = deg2rad($m);
         $e = $m;
@@ -19,6 +21,6 @@ class MathLibrary
             $e -= $delta / ( 1 - $ecc * cos($e) );
         } while ( abs($delta) > $EPSILON );
 
-        return ( $e );
+        return $e;
     }
 }

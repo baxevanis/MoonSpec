@@ -17,18 +17,28 @@ class Moon
     const PARALLAX_DISTANCE_FROM_EARTH = 0.9507; // parallax at distance a from Earth
     const SYNODIC_MONTH = 29.53058868; // synodic month (new Moon to new Moon)
 
-    static public function calculateAgeInDegree(\DateTime $dateTime)
+    private $epoch;
+    private $sun;
+    private $mathLibrary;
+
+    public function __construct(Epoch $epoch = null, Sun $sun = null, MathLibrary $mathLibrary = null) {
+        $this->epoch = ($epoch) ?: new Epoch();
+        $this->mathLibrary = ($mathLibrary) ?: new MathLibrary();
+        $this->sun = ($sun) ?: new Sun($this->mathLibrary);
+    }
+
+    private function calculateAgeInDegree()
     {
 
-        $timestampWithinEpoch = Epoch::getTimeStampBasedOnEpoch($dateTime);
-        $Lambdasun = Sun::getSubGeocentricEclipticLongitude($timestampWithinEpoch);
-        $M = Sun::getM($timestampWithinEpoch);
+        $timestampWithinEpoch = $this->epoch->getTimeStampBasedOnEpoch();
+        $Lambdasun = $this->sun->getSubGeocentricEclipticLongitudeForEpoch($this->epoch);
+        $M = $this->sun->getMForEpoch($this->epoch);
 
         // Moon's mean longitude.
-        $ml = MathLibrary::fixangle( 13.1763966 * $timestampWithinEpoch + self::EPOCH_MEAN_LONGITUDE );
+        $ml = $this->mathLibrary->fixAngle( 13.1763966 * $timestampWithinEpoch + self::EPOCH_MEAN_LONGITUDE );
 
         // Moon's mean anomaly.
-        $MM = MathLibrary::fixangle( $ml - 0.1114041 * $timestampWithinEpoch - self::EPOCH_MEAN_LONGITUDE_PERIGEE );
+        $MM = $this->mathLibrary->fixAngle( $ml - 0.1114041 * $timestampWithinEpoch - self::EPOCH_MEAN_LONGITUDE_PERIGEE );
 
         // Evection.
         $Ev = 1.2739 * sin( deg2rad(2 * ($ml - $Lambdasun) - $MM) );
@@ -62,14 +72,14 @@ class Moon
         return $MoonAgeInDegree;
     }
 
-    static public function getPhase(\DateTime $dateTime)
+    public function getPhase()
     {
-        return (1 - cos(deg2rad(self::calculateAgeInDegree($dateTime)))) / 2;
+        return (1 - cos(deg2rad($this->calculateAgeInDegree()))) / 2;
     }
 
-    static public function getCurrentMoonPhase(\DateTime $dateTime)
+    public function getCurrentMoonPhase()
     {
-        return self::SYNODIC_MONTH * ( MathLibrary::fixangle(self::calculateAgeInDegree($dateTime)) / 360.0 );
+        return self::SYNODIC_MONTH * ( $this->mathLibrary->fixAngle($this->calculateAgeInDegree()) / 360.0 );
     }
 
 }
